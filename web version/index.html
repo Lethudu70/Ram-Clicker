@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b1220" />
+    <title>RAM Clicker</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div class="brand__title">RAM Clicker</div>
+          <div class="brand__subtitle" id="brandSubtitle">Clique sur les barrettes, empile la puissance.</div>
+        </div>
+      </div>
+      <button id="langToggle" class="btn btn--ghost lang" type="button" title="FR/EN">FR</button>
+      <div class="stats" aria-label="Statistiques">
+        <div class="stat">
+          <div class="stat__label" id="powerLabel">Puissance</div>
+          <div class="stat__value" id="powerValue">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat__label" id="bitsLabel">Bits</div>
+          <div class="stat__value" id="bitsValue">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat__label" id="bpsLabel">Bits/s</div>
+          <div class="stat__value" id="bpsValue">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat__label" id="rebirthLabel">Rebirth</div>
+          <div class="stat__value" id="rebirthValue">0</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="play">
+        <div class="card hero">
+          <div class="hero__title" id="ramTitle">Barrette RAM</div>
+          <div class="hero__desc">
+            +<span id="perClickValue">1</span> <span id="perClickLabel">Puissance par clic</span> · x<span id="globalMultValue">1.00</span>
+          </div>
+          <button id="ramButton" class="ram" type="button" aria-label="Cliquer sur la barrette RAM">
+            <span class="ram__svg" aria-hidden="true"></span>
+            <span class="ram__hint" id="clickHint">Clique</span>
+          </button>
+          <div class="hero__footer">
+            <div class="pill"><span id="autoLabel">Auto</span>&nbsp;: <span id="perSecValue">0</span> <span id="powerPerSecLabel">Puissance/s</span></div>
+            <div class="pill"><span id="achLabel">Achievements</span>&nbsp;: <span id="achCountValue">0</span>/<span id="achTotalValue">0</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="row">
+            <div>
+              <div class="h2" id="nextRebirthTitle">Prochain rebirth</div>
+              <div class="muted">
+                <span id="reachLabel">Atteins</span> <span id="rebirthReqValue">0</span> <span id="powerWord">Puissance</span>
+                (<span id="currentTotalLabel">total actuel</span>&nbsp;: <span id="powerForRebirthValue">0</span>).
+              </div>
+            </div>
+            <button id="rebirthButton" class="btn btn--warn" type="button">Rebirth</button>
+          </div>
+          <div class="progress" aria-label="Progression rebirth">
+            <div class="progress__bar" id="rebirthProgressBar"></div>
+          </div>
+          <div class="muted small" id="rebirthBonusValue">Bonus actuel&nbsp;: x1.00</div>
+        </div>
+
+        <div class="card">
+          <details class="settings">
+            <summary id="optionsSummary">Options</summary>
+            <div class="settings__body">
+              <div class="row wrap">
+                <button id="saveButton" class="btn" type="button">Sauvegarder</button>
+                <button id="exportButton" class="btn" type="button">Exporter</button>
+                <button id="importButton" class="btn" type="button">Importer</button>
+                <button id="resetButton" class="btn btn--danger" type="button">Reset</button>
+              </div>
+              <div class="muted small" id="saveHelp">La sauvegarde se fait aussi automatiquement dans ton navigateur (localStorage).</div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="side">
+        <div class="tabs" role="tablist" aria-label="Onglets">
+          <button class="tab is-active" id="tabShop" type="button" role="tab" aria-selected="true" aria-controls="panelShop">
+            Upgrades
+          </button>
+          <button class="tab" id="tabAch" type="button" role="tab" aria-selected="false" aria-controls="panelAch">
+            Achievements
+          </button>
+        </div>
+
+        <div class="panel is-active" id="panelShop" role="tabpanel" aria-labelledby="tabShop">
+          <div class="panel__head">
+            <div>
+              <div class="h2" id="shopTitle">Boutique</div>
+              <div class="muted" id="shopSubtitle">Dépense tes Bits pour booster tes gains.</div>
+            </div>
+          </div>
+          <div id="shopList" class="list" aria-label="Liste des upgrades"></div>
+        </div>
+
+        <div class="panel" id="panelAch" role="tabpanel" aria-labelledby="tabAch">
+          <div class="panel__head">
+            <div>
+              <div class="h2" id="achTitle">Achievements</div>
+              <div class="muted" id="achSubtitle">Chaque achievement donne +1% gains (cumulable).</div>
+            </div>
+          </div>
+          <div id="achList" class="grid" aria-label="Liste des achievements"></div>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="confirmDialog" class="dialog">
+      <form method="dialog" class="dialog__card">
+        <div class="h2" id="dialogTitle">Confirmer</div>
+        <div class="muted" id="dialogBody">...</div>
+        <div class="dialog__actions">
+          <button class="btn btn--ghost" id="dialogCancel" value="cancel">Annuler</button>
+          <button class="btn btn--warn" id="dialogConfirm" value="ok">OK</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="textDialog" class="dialog">
+      <form method="dialog" class="dialog__card">
+        <div class="h2" id="textDialogTitle">Texte</div>
+        <textarea id="textDialogArea" class="textarea" spellcheck="false"></textarea>
+        <div class="dialog__actions">
+          <button class="btn btn--ghost" id="textDialogClose" value="cancel">Fermer</button>
+          <button class="btn" id="textDialogCopy" value="copy">Copier</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
